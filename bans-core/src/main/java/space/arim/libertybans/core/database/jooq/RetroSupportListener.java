@@ -33,6 +33,9 @@ final class RetroSupportListener implements ExecuteListener {
 	private static final Pattern OFFSET_FETCH_PATTERN = Pattern.compile(
 			"OFFSET (\\?|[0-9]+) ROWS FETCH (FIRST|NEXT) (\\?|[0-9]+) ROWS ONLY", Pattern.CASE_INSENSITIVE
 	);
+	private static final Pattern OFFSET_PATTERN = Pattern.compile(
+			"OFFSET (\\?|[0-9]+) ROWS", Pattern.CASE_INSENSITIVE
+	);
 	private static final Pattern FETCH_PATTERN = Pattern.compile(
 			"FETCH (FIRST|NEXT) (\\?|[0-9]+) ROWS ONLY", Pattern.CASE_INSENSITIVE
 	);
@@ -47,15 +50,18 @@ final class RetroSupportListener implements ExecuteListener {
 			return;
 		}
 		StringBuilder newQuery = new StringBuilder(query.length());
-		Matcher matcher1, matcher2;
+		Matcher matcher1, matcher2, matcher3;
 		matcher1 = OFFSET_FETCH_PATTERN.matcher(query);
 		if (matcher1.find()) {
 			// MariaDB thankfully provides the syntax 'LIMIT offset, row_count'
 			matcher1.appendReplacement(newQuery, "LIMIT $1, $3");
 			matcher1.appendTail(newQuery);
-		} else if ((matcher2 = FETCH_PATTERN.matcher(query)).find()) {
-			matcher2.appendReplacement(newQuery, "LIMIT $2");
+		} else if ((matcher2 = OFFSET_PATTERN.matcher(query)).find()) {
+			matcher2.appendReplacement(newQuery, "OFFSET $1");
 			matcher2.appendTail(newQuery);
+		} else if ((matcher3 = FETCH_PATTERN.matcher(query)).find()) {
+			matcher3.appendReplacement(newQuery, "LIMIT $2");
+			matcher3.appendTail(newQuery);
 		} else {
 			// Keep the existing query
 			return;

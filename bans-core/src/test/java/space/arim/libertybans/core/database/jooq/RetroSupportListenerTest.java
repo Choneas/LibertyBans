@@ -70,6 +70,22 @@ public class RetroSupportListenerTest {
 	}
 
 	@Test
+	public void queryWithOffset() {
+		assertModification(
+				"SELECT col FROM tab OFFSET 4",
+				"SELECT col FROM tab OFFSET 4"
+		);
+	}
+
+	@Test
+	public void queryWithOffsetStandard() {
+		assertModification(
+				"SELECT col FROM tab OFFSET 4",
+				"SELECT col FROM tab OFFSET 4 ROWS"
+		);
+	}
+
+	@Test
 	public void queryWithOffsetLimit() {
 		assertModification(
 				"SELECT col FROM tab LIMIT 38 OFFSET 4",
