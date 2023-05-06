@@ -57,7 +57,7 @@ final class RetroSupportListener implements ExecuteListener {
 			matcher1.appendReplacement(newQuery, "LIMIT $1, $3");
 			matcher1.appendTail(newQuery);
 		} else if ((matcher2 = OFFSET_PATTERN.matcher(query)).find()) {
-			matcher2.appendReplacement(newQuery, "LIMIT ~0 OFFSET $1");
+			matcher2.appendReplacement(newQuery, "LIMIT " + Integer.MAX_VALUE + " OFFSET $1");
 			matcher2.appendTail(newQuery);
 		} else if ((matcher3 = FETCH_PATTERN.matcher(query)).find()) {
 			matcher3.appendReplacement(newQuery, "LIMIT $2");

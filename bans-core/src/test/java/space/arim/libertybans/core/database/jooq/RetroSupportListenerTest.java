@@ -72,7 +72,7 @@ public class RetroSupportListenerTest {
 	@Test
 	public void queryWithOffset() {
 		assertModification(
-				"SELECT col FROM tab LIMIT ~0 OFFSET 4",
+				"SELECT col FROM tab LIMIT " + Integer.MAX_VALUE + " OFFSET 4",
 				"SELECT col FROM tab OFFSET 4 ROWS"
 		);
 	}
